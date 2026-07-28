@@ -7,44 +7,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String    @id @default(cuid())
-  fullName  String
-  phone     String    @unique
-  email     String?
-  weddings  Wedding[]
-  createdAt DateTime  @default(now())
+model Contributor {
+  id             Int       @id @default(autoincrement())
+  fullName       String
+  phone          String    @unique
+  pledgedAmount  Float
+  paidAmount     Float     @default(0)
+  status         String    @default("Pending")
+  lastReminder   DateTime?
+  createdAt      DateTime  @default(now())
+
+  payments       Payment[]
 }
 
-model Wedding {
-  id          String     @id @default(cuid())
-  title       String
-  groomName   String
-  brideName   String
-  weddingDate DateTime
-  venue        String
-  ownerId      String
-  owner        User       @relation(fields: [ownerId], references: [id])
-  guests       Guest[]
-  reminders    Reminder[]
-  createdAt    DateTime   @default(now())
-}
+model Payment {
+  id             Int          @id @default(autoincrement())
+  amount         Float
+  notes          String?
+  paymentDate    DateTime     @default(now())
 
-model Guest {
-  id          String    @id @default(cuid())
-  fullName    String
-  phone       String
-  rsvpStatus  String     @default("Pending")
-  weddingId   String
-  wedding     Wedding    @relation(fields: [weddingId], references: [id])
-}
-
-model Reminder {
-  id          String    @id @default(cuid())
-  message     String
-  sendAt      DateTime
-  sent        Boolean   @default(false)
-  weddingId   String
-  wedding     Wedding   @relation(fields: [weddingId], references: [id])
-  createdAt   DateTime  @default(now())
+  contributorId  Int
+  contributor    Contributor  @relation(fields: [contributorId], references: [id], onDelete: Cascade)
 }
