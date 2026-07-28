@@ -4,6 +4,7 @@ import Topbar from "../components/Topbar";
 import StatCard from "../components/StatCard";
 import ContributorsTable from "../components/ContributorsTable";
 import AddContributorModal from "../components/AddContributorModal";
+import RecordPaymentModal from "../components/RecordPaymentModal";
 import api from "../services/api";
 
 export default function Dashboard() {
@@ -18,11 +19,14 @@ export default function Dashboard() {
   });
 
   const [contributors, setContributors] = useState([]);
+
   const [showModal, setShowModal] = useState(false);
 
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedContributor, setSelectedContributor] = useState(null);
+
   useEffect(() => {
-    fetchStats();
-    fetchContributors();
+    refreshData();
   }, []);
 
   async function fetchStats() {
@@ -46,6 +50,11 @@ export default function Dashboard() {
   function refreshData() {
     fetchStats();
     fetchContributors();
+  }
+
+  function openPaymentModal(contributor) {
+    setSelectedContributor(contributor);
+    setShowPaymentModal(true);
   }
 
   return (
@@ -77,12 +86,25 @@ export default function Dashboard() {
           />
         </div>
 
-        <ContributorsTable contributors={contributors} />
+        <ContributorsTable
+          contributors={contributors}
+          onPayment={openPaymentModal}
+        />
 
         <AddContributorModal
           isOpen={showModal}
           onClose={() => setShowModal(false)}
           onContributorAdded={refreshData}
+        />
+
+        <RecordPaymentModal
+          isOpen={showPaymentModal}
+          contributor={selectedContributor}
+          onClose={() => {
+            setShowPaymentModal(false);
+            setSelectedContributor(null);
+          }}
+          onPaymentRecorded={refreshData}
         />
       </main>
     </div>

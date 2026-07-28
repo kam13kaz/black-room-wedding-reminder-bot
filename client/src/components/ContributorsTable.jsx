@@ -11,7 +11,10 @@ const getStatusColor = (status) => {
   }
 };
 
-export default function ContributorsTable({ contributors }) {
+export default function ContributorsTable({
+  contributors,
+  onPayment,
+}) {
   if (!contributors || contributors.length === 0) {
     return (
       <div className="bg-white rounded-xl shadow mt-8 p-6 text-center">
@@ -41,14 +44,17 @@ export default function ContributorsTable({ contributors }) {
             <th>Pledged</th>
             <th>Paid</th>
             <th>Status</th>
-            <th>Actions</th>
+            <th className="text-center">Actions</th>
           </tr>
         </thead>
 
         <tbody>
           {contributors.map((person) => (
-            <tr key={person.id} className="border-b hover:bg-gray-50">
-              <td className="py-4">{person.fullName}</td>
+            <tr
+              key={person.id}
+              className="border-b hover:bg-gray-50 transition"
+            >
+              <td className="py-4 font-medium">{person.fullName}</td>
 
               <td>{person.phone}</td>
 
@@ -71,13 +77,18 @@ export default function ContributorsTable({ contributors }) {
               </td>
 
               <td>
-                <div className="flex gap-2">
-                  <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-                    Payment
+                <div className="flex justify-center gap-2">
+                  <button
+                    onClick={() => onPayment(person)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg"
+                  >
+                    💵 Payment
                   </button>
 
-                  <button className="bg-black text-white px-3 py-1 rounded hover:bg-gray-800">
-                    Reminder
+                  <button
+                    className="bg-black hover:bg-gray-800 text-white px-3 py-2 rounded-lg"
+                  >
+                    📲 Reminder
                   </button>
                 </div>
               </td>
